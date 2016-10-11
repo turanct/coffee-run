@@ -1,0 +1,32 @@
+{
+    "name": "turanct/coffee-run",
+    "description": "Manage coffee runs",
+    "type": "application",
+    "homepage": "http://github.com/turanct/coffee-run",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Toon Daelman",
+            "email": "spinnewebber_toon@hotmail.com",
+            "homepage": "http://turanct.wordpress.com",
+            "role": "Developer"
+        }
+    ],
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.7.0",
+        "sebastian/phpcpd": "^2.0.4",
+        "phpmd/phpmd": "^2.4.3",
+        "pdepend/pdepend": "^2.2.4",
+        "symfony/yaml": "~2.1",
+        "phpunit/phpunit": "^4.8.6"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-4": {
+            "CoffeeRun\\Web\\": "web/",
+            "CoffeeRun\\": "src/"
+        }
+    }
+}
