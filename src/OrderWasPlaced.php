@@ -4,33 +4,25 @@ namespace CoffeeRun;
 
 use DateTime;
 
-final class ProductWasOrdered
+final class OrderWasPlaced
 {
     private $id;
-    private $userId;
-    private $productId;
+    private $order;
     private $createdAt;
 
     public function __construct(
         CoffeeRunId $id,
-        UserId $userId,
-        ProductId $productId,
+        Order $order,
         DateTime $createdAt
     ) {
         $this->id = $id;
-        $this->userId = $userId;
-        $this->productId = $productId;
+        $this->order = $order;
         $this->createdAt = $createdAt;
     }
 
-    public function getUserId()
+    public function getOrder()
     {
-        return $this->userId;
-    }
-
-    public function getProductId()
-    {
-        return $this->productId;
+        return $this->order;
     }
 
     public function getCreatedAt()

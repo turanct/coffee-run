@@ -45,10 +45,9 @@ final class CoffeeRun
     {
         $this->assertOrdersAreOpen();
 
-        $event = new ProductWasOrdered(
+        $event = new OrderWasPlaced(
             $this->id,
-            $order->getUserId(),
-            $order->getProductId(),
+            $order,
             $this->clock->getTime()
         );
 

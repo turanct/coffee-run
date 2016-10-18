@@ -59,8 +59,8 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             array(
-                new ProductWasOrdered($id, $userId, $product1, $now),
-                new ProductWasOrdered($id, $otherUser, $product2, $now),
+                new OrderWasPlaced($id, $order1, $now),
+                new OrderWasPlaced($id, $order2, $now),
             ),
             $coffeeRun->getRecordedEvents()
         );
