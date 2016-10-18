@@ -32,19 +32,18 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_accepts_orders()
     {
-        $coffeeRun = $this->freshCoffeeRun();
-        $id = $coffeeRun->getId();
-
         $now = new DateTime('now');
         $clock = $this->getClock($now);
+        $coffeeRun = $this->freshCoffeeRun($clock);
+        $id = $coffeeRun->getId();
 
         $product1 = ProductId::generate();
         $userId = UserId::generate();
-        $coffeeRun->orderProduct($product1, $userId, $clock);
+        $coffeeRun->orderProduct($product1, $userId);
 
         $product2 = ProductId::generate();
         $otherUser = UserId::generate();
-        $coffeeRun->orderProduct($product2, $otherUser, $clock);
+        $coffeeRun->orderProduct($product2, $otherUser);
 
         $this->assertEquals(
             array(
@@ -60,9 +59,9 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
      */
     public function test_it_rejects_orders_when_orders_were_closed()
     {
-        $coffeeRun = $this->freshCoffeeRun();
-
         $clock = $this->getClock(new DateTime('now'));
+        $coffeeRun = $this->freshCoffeeRun($clock);
+
         $coffeeRun->stopOrdering($clock);
 
         $product1 = ProductId::generate();
@@ -70,7 +69,7 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $coffeeRun->orderProduct($product1, $userId, $clock);
     }
 
-    private function freshCoffeeRun()
+    private function freshCoffeeRun(Clock $clock)
     {
         $id = CoffeeRunId::generate();
         $userId = UserId::generate();
@@ -82,7 +81,7 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
             new CoffeeRunWasAnnounced($id, $userId, $shopId, $time, $now),
         );
 
-        $coffeeRun = new CoffeeRun($id, $events);
+        $coffeeRun = new CoffeeRun($id, $events, $clock);
 
         return $coffeeRun;
     }
