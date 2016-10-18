@@ -9,10 +9,10 @@ final class OrdersWereClosed
     private $id;
     private $createdAt;
 
-    public function __construct(CoffeeRunId $id)
+    public function __construct(CoffeeRunId $id, DateTime $createdAt)
     {
         $this->id = $id;
-        $this->createdAt = new DateTime('now');
+        $this->createdAt = $createdAt;
     }
 
     public function getCoffeeRunId()

@@ -16,12 +16,22 @@ final class CoffeeRun
         $this->events = $events;
     }
 
-    public static function announce(UserId $userId, ShopId $shopId, DateTime $time)
-    {
+    public static function announce(
+        UserId $userId,
+        ShopId $shopId,
+        DateTime $time,
+        Clock $clock
+    ) {
         $id = CoffeeRunId::generate();
 
         $events = array();
-        $events[] = new CoffeeRunWasAnnounced($id, $userId, $shopId, $time);
+        $events[] = new CoffeeRunWasAnnounced(
+            $id,
+            $userId,
+            $shopId,
+            $time,
+            $clock->getTime()
+        );
 
         $coffeeRun = new static($id, $events);
         $coffeeRun->recordedEvents = $events;
@@ -29,21 +39,29 @@ final class CoffeeRun
         return $coffeeRun;
     }
 
-    public function orderProduct(ProductId $productId, UserId $userId)
-    {
+    public function orderProduct(
+        ProductId $productId,
+        UserId $userId,
+        Clock $clock
+    ) {
         $this->assertOrdersAreOpen();
 
-        $event = new ProductWasOrdered($this->id, $userId, $productId);
+        $event = new ProductWasOrdered(
+            $this->id,
+            $userId,
+            $productId,
+            $clock->getTime()
+        );
 
         $this->events[] = $event;
         $this->recordedEvents[] = $event;
     }
 
-    public function stopOrdering()
+    public function stopOrdering(Clock $clock)
     {
         $this->assertOrdersAreOpen();
 
-        $event = new OrdersWereClosed($this->id);
+        $event = new OrdersWereClosed($this->id, $clock->getTime());
 
         $this->events[] = $event;
         $this->recordedEvents[] = $event;
@@ -51,10 +69,10 @@ final class CoffeeRun
 
     private function assertOrdersAreOpen()
     {
-        $closedEvent = new OrdersWereClosed($this->id);
-
-        if (in_array($closedEvent, $this->events)) {
-            throw new OrdersAlreadyClosed();
+        foreach ($this->events as $event) {
+            if (get_class($event) === 'CoffeeRun\\OrdersWereClosed') {
+                throw new OrdersAlreadyClosed();
+            }
         }
     }
 

@@ -14,12 +14,13 @@ final class ProductWasOrdered
     public function __construct(
         CoffeeRunId $id,
         UserId $userId,
-        ProductId $productId
+        ProductId $productId,
+        DateTime $createdAt
     ) {
         $this->id = $id;
         $this->userId = $userId;
         $this->productId = $productId;
-        $this->createdAt = new DateTime('now');
+        $this->createdAt = $createdAt;
     }
 
     public function getUserId()

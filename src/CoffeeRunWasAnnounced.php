@@ -16,13 +16,14 @@ final class CoffeeRunWasAnnounced
         CoffeeRunId $id,
         UserId $userId,
         ShopId $shopId,
-        DateTime $time
+        DateTime $time,
+        DateTime $createdAt
     ) {
         $this->id = $id;
         $this->userId = $userId;
         $this->shopId = $shopId;
         $this->time = clone $time;
-        $this->createdAt = new DateTime('now');
+        $this->createdAt = $createdAt;
     }
 
     public function getUserId()
