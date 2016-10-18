@@ -37,24 +37,10 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $coffeeRun = $this->freshCoffeeRun($clock);
         $id = $coffeeRun->getId();
 
-        $userId = UserId::generate();
-        $product1 = ProductId::generate();
-        $order1 = new Order(
-            $userId,
-            $product1,
-            new Price(200),
-            new Description('foo')
-        );
+        $order1 = $this->freshOrder(200, 'foo');
         $coffeeRun->placeOrder($order1);
 
-        $otherUser = UserId::generate();
-        $product2 = ProductId::generate();
-        $order2 = new Order(
-            $otherUser,
-            $product2,
-            new Price(400),
-            new Description('bar')
-        );
+        $order2 = $this->freshOrder(400, 'bar');
         $coffeeRun->placeOrder($order2);
 
         $this->assertEquals(
@@ -76,12 +62,7 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
 
         $coffeeRun->stopOrdering($clock);
 
-        $order = new Order(
-            UserId::generate(),
-            ProductId::generate(),
-            new Price(200),
-            new Description('foo')
-        );
+        $order = $this->freshOrder(200, 'foo');
         $coffeeRun->placeOrder($order);
     }
 
@@ -100,6 +81,18 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $coffeeRun = new CoffeeRun($id, $events, $clock);
 
         return $coffeeRun;
+    }
+
+    private function freshOrder($price, $description)
+    {
+        $order = new Order(
+            UserId::generate(),
+            ProductId::generate(),
+            new Price($price),
+            new Description($description)
+        );
+
+        return $order;
     }
 
     private function getClock(DateTime $now)
