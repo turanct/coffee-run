@@ -37,13 +37,25 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $coffeeRun = $this->freshCoffeeRun($clock);
         $id = $coffeeRun->getId();
 
-        $product1 = ProductId::generate();
         $userId = UserId::generate();
-        $coffeeRun->orderProduct($product1, $userId);
+        $product1 = ProductId::generate();
+        $order1 = new Order(
+            $userId,
+            $product1,
+            new Price(200),
+            new Description('foo')
+        );
+        $coffeeRun->placeOrder($order1);
 
-        $product2 = ProductId::generate();
         $otherUser = UserId::generate();
-        $coffeeRun->orderProduct($product2, $otherUser);
+        $product2 = ProductId::generate();
+        $order2 = new Order(
+            $otherUser,
+            $product2,
+            new Price(400),
+            new Description('bar')
+        );
+        $coffeeRun->placeOrder($order2);
 
         $this->assertEquals(
             array(
@@ -64,9 +76,13 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
 
         $coffeeRun->stopOrdering($clock);
 
-        $product1 = ProductId::generate();
-        $userId = UserId::generate();
-        $coffeeRun->orderProduct($product1, $userId, $clock);
+        $order = new Order(
+            UserId::generate(),
+            ProductId::generate(),
+            new Price(200),
+            new Description('foo')
+        );
+        $coffeeRun->placeOrder($order);
     }
 
     private function freshCoffeeRun(Clock $clock)

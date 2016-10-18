@@ -41,16 +41,14 @@ final class CoffeeRun
         return $coffeeRun;
     }
 
-    public function orderProduct(
-        ProductId $productId,
-        UserId $userId
-    ) {
+    public function placeOrder(Order $order)
+    {
         $this->assertOrdersAreOpen();
 
         $event = new ProductWasOrdered(
             $this->id,
-            $userId,
-            $productId,
+            $order->getUserId(),
+            $order->getProductId(),
             $this->clock->getTime()
         );
 
