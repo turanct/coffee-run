@@ -15,6 +15,8 @@ final class Price
      * that we want to use throughout the application, let's say 1 cent.
      * We'll try to hold off on currencies for now, let's not make it
      * more complicated that we need. Everything is in the same currency.
+     *
+     * @param string $amount
      */
     public function __construct($amount)
     {

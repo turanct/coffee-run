@@ -9,7 +9,7 @@ interface Products
      *
      * @param ShopId The shop's id
      *
-     * @return [Product] A list of products
+     * @return Product[] A list of products
      */
     public function forShop(ShopId $id);
 }

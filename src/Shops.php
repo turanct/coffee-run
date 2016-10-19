@@ -7,7 +7,7 @@ interface Shops
     /**
      * Get a list of all shops
      *
-     * @return [Shop] A list of shops
+     * @return Shop[] A list of shops
      */
     public function getAll();
 
