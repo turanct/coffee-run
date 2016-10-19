@@ -11,7 +11,7 @@ final class Description
     /**
      * Description
      *
-     * Extra info on an order
+     * @param string $description Extra info on an order
      */
     public function __construct($description)
     {
