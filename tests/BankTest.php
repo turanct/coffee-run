@@ -23,6 +23,13 @@ class BankTest extends \PHPUnit_Framework_TestCase
             $bank->paymentsToBeMade($from)
         );
 
+        $this->assertEquals(
+            array(
+                new DuePayment($from, $to, $amount),
+            ),
+            $bank->paymentsToBeReceived($to)
+        );
+
         $bank->expectPayment($from, $to, $amount);
 
         $this->assertEquals(
@@ -30,6 +37,13 @@ class BankTest extends \PHPUnit_Framework_TestCase
                 new DuePayment($from, $to, $amount->add($amount)),
             ),
             $bank->paymentsToBeMade($from)
+        );
+
+        $this->assertEquals(
+            array(
+                new DuePayment($from, $to, $amount->add($amount)),
+            ),
+            $bank->paymentsToBeReceived($to)
         );
     }
 
@@ -49,11 +63,33 @@ class BankTest extends \PHPUnit_Framework_TestCase
             $bank->paymentsToBeMade($from)
         );
 
+        $this->assertEquals(
+            array(),
+            $bank->paymentsToBeReceived($to)
+        );
+
         $bank->pay($from, $to, $amount);
 
         $this->assertEquals(
             array(),
             $bank->paymentsToBeMade($from)
+        );
+
+        $this->assertEquals(
+            array(),
+            $bank->paymentsToBeReceived($to)
+        );
+
+        $bank->expectPayment($from, $to, $amount);
+
+        $this->assertEquals(
+            array(),
+            $bank->paymentsToBeMade($from)
+        );
+
+        $this->assertEquals(
+            array(),
+            $bank->paymentsToBeReceived($to)
         );
     }
 
