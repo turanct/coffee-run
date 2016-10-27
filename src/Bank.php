@@ -36,14 +36,14 @@ final class Bank
     {
         $expectedPayments = array_filter(
             $this->log,
-            function($logItem) {
+            function ($logItem) {
                 return $logItem instanceof PaymentExpected;
             }
         );
 
         $payments = array_reduce(
             $expectedPayments,
-            function($payments, $logItem) use ($by) {
+            function ($payments, $logItem) use ($by) {
                 if ($logItem->getFrom() == $by) {
                     $to = (string) $logItem->getTo();
 
@@ -63,14 +63,14 @@ final class Bank
 
         $receivedPayments = array_filter(
             $this->log,
-            function($logItem) {
+            function ($logItem) {
                 return $logItem instanceof PaymentReceived;
             }
         );
 
         $payments = array_reduce(
             $receivedPayments,
-            function($payments, $logItem) use ($by) {
+            function ($payments, $logItem) use ($by) {
                 if ($logItem->getFrom() == $by) {
                     $to = (string) $logItem->getTo();
 
@@ -88,13 +88,13 @@ final class Bank
 
         $payments = array_filter(
             $payments,
-            function(Price $amount) {
+            function (Price $amount) {
                 return $amount->greaterThan(new Price(0));
             }
         );
 
         $payments = array_map(
-            function($amount, $to) use ($by) {
+            function ($amount, $to) use ($by) {
                 return new DuePayment($by, new UserId($to), $amount);
             },
             $payments,
@@ -108,14 +108,14 @@ final class Bank
     {
         $expectedPayments = array_filter(
             $this->log,
-            function($logItem) {
+            function ($logItem) {
                 return $logItem instanceof PaymentExpected;
             }
         );
 
         $payments = array_reduce(
             $expectedPayments,
-            function($payments, $logItem) use ($by) {
+            function ($payments, $logItem) use ($by) {
                 if ($logItem->getTo() == $by) {
                     $from = (string) $logItem->getFrom();
 
@@ -135,14 +135,14 @@ final class Bank
 
         $receivedPayments = array_filter(
             $this->log,
-            function($logItem) {
+            function ($logItem) {
                 return $logItem instanceof PaymentReceived;
             }
         );
 
         $payments = array_reduce(
             $receivedPayments,
-            function($payments, $logItem) use ($by) {
+            function ($payments, $logItem) use ($by) {
                 if ($logItem->getTo() == $by) {
                     $from = (string) $logItem->getFrom();
 
@@ -160,13 +160,13 @@ final class Bank
 
         $payments = array_filter(
             $payments,
-            function(Price $amount) {
+            function (Price $amount) {
                 return $amount->greaterThan(new Price(0));
             }
         );
 
         $payments = array_map(
-            function($amount, $from) use ($by) {
+            function ($amount, $from) use ($by) {
                 return new DuePayment(new UserId($from), $by, $amount);
             },
             $payments,
