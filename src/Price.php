@@ -33,4 +33,23 @@ final class Price
             throw new InvalidArgumentException($message);
         }
     }
+
+    public function add(Price $otherPrice)
+    {
+        return new static($this->amount + $otherPrice->amount);
+    }
+
+    public function subtract(Price $otherPrice)
+    {
+        if ($otherPrice->greaterThan($this)) {
+            return new static(0);
+        }
+
+        return new static($this->amount - $otherPrice->amount);
+    }
+
+    public function greaterThan(Price $otherPrice)
+    {
+        return $this->amount > $otherPrice->amount;
+    }
 }
