@@ -36,24 +36,25 @@ final class Bank
     {
         $expectedPayments = array_filter(
             $this->log,
-            function ($logItem) {
-                return $logItem instanceof PaymentExpected;
+            function ($logItem) use ($by) {
+                return
+                    $logItem instanceof PaymentExpected
+                    && $logItem->getFrom() == $by
+                ;
             }
         );
 
         $payments = array_reduce(
             $expectedPayments,
-            function ($payments, $logItem) use ($by) {
-                if ($logItem->getFrom() == $by) {
-                    $to = (string) $logItem->getTo();
+            function ($payments, $logItem) {
+                $to = (string) $logItem->getTo();
 
-                    if (!isset($payments[$to])) {
-                        $payments[$to] = $logItem->getAmount();
-                    } else {
-                        $payments[$to] = $logItem->getAmount()->add(
-                            $payments[$to]
-                        );
-                    }
+                if (!isset($payments[$to])) {
+                    $payments[$to] = $logItem->getAmount();
+                } else {
+                    $payments[$to] = $logItem->getAmount()->add(
+                        $payments[$to]
+                    );
                 }
 
                 return $payments;
@@ -63,22 +64,23 @@ final class Bank
 
         $receivedPayments = array_filter(
             $this->log,
-            function ($logItem) {
-                return $logItem instanceof PaymentReceived;
+            function ($logItem) use ($by) {
+                return
+                    $logItem instanceof PaymentReceived
+                    && $logItem->getFrom() == $by
+                ;
             }
         );
 
         $payments = array_reduce(
             $receivedPayments,
-            function ($payments, $logItem) use ($by) {
-                if ($logItem->getFrom() == $by) {
-                    $to = (string) $logItem->getTo();
+            function ($payments, $logItem) {
+                $to = (string) $logItem->getTo();
 
-                    if (isset($payments[$to])) {
-                        $payments[$to] = $payments[$to]->subtract(
-                            $logItem->getAmount()
-                        );
-                    }
+                if (isset($payments[$to])) {
+                    $payments[$to] = $payments[$to]->subtract(
+                        $logItem->getAmount()
+                    );
                 }
 
                 return $payments;
@@ -108,24 +110,25 @@ final class Bank
     {
         $expectedPayments = array_filter(
             $this->log,
-            function ($logItem) {
-                return $logItem instanceof PaymentExpected;
+            function ($logItem) use ($by) {
+                return
+                    $logItem instanceof PaymentExpected
+                    && $logItem->getTo() == $by
+                ;
             }
         );
 
         $payments = array_reduce(
             $expectedPayments,
-            function ($payments, $logItem) use ($by) {
-                if ($logItem->getTo() == $by) {
-                    $from = (string) $logItem->getFrom();
+            function ($payments, $logItem) {
+                $from = (string) $logItem->getFrom();
 
-                    if (!isset($payments[$from])) {
-                        $payments[$from] = $logItem->getAmount();
-                    } else {
-                        $payments[$from] = $logItem->getAmount()->add(
-                            $payments[$from]
-                        );
-                    }
+                if (!isset($payments[$from])) {
+                    $payments[$from] = $logItem->getAmount();
+                } else {
+                    $payments[$from] = $logItem->getAmount()->add(
+                        $payments[$from]
+                    );
                 }
 
                 return $payments;
@@ -135,22 +138,23 @@ final class Bank
 
         $receivedPayments = array_filter(
             $this->log,
-            function ($logItem) {
-                return $logItem instanceof PaymentReceived;
+            function ($logItem) use ($by) {
+                return
+                    $logItem instanceof PaymentReceived
+                    && $logItem->getTo() == $by
+                ;
             }
         );
 
         $payments = array_reduce(
             $receivedPayments,
-            function ($payments, $logItem) use ($by) {
-                if ($logItem->getTo() == $by) {
-                    $from = (string) $logItem->getFrom();
+            function ($payments, $logItem) {
+                $from = (string) $logItem->getFrom();
 
-                    if (isset($payments[$from])) {
-                        $payments[$from] = $payments[$from]->subtract(
-                            $logItem->getAmount()
-                        );
-                    }
+                if (isset($payments[$from])) {
+                    $payments[$from] = $payments[$from]->subtract(
+                        $logItem->getAmount()
+                    );
                 }
 
                 return $payments;
