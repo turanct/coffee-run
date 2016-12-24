@@ -1,7 +1,8 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Runs;
 
+use CoffeeRun\UserId;
 use DateTime;
 
 final class CoffeeRunWasAnnounced

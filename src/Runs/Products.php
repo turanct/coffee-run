@@ -1,6 +1,6 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Runs;
 
 interface Products
 {

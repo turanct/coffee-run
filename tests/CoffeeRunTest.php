@@ -1,7 +1,9 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Runs;
 
+use CoffeeRun\UserId;
+use CoffeeRun\Clock;
 use DateTime;
 
 class CoffeeRunTest extends \PHPUnit_Framework_TestCase
@@ -53,7 +55,7 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException CoffeeRun\OrdersAlreadyClosed
+     * @expectedException CoffeeRun\Runs\OrdersAlreadyClosed
      */
     public function test_it_rejects_orders_when_orders_were_closed()
     {

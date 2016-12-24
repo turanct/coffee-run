@@ -1,7 +1,9 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Runs;
 
+use CoffeeRun\UserId;
+use CoffeeRun\Clock;
 use DateTime;
 
 final class CoffeeRun
@@ -68,7 +70,7 @@ final class CoffeeRun
     private function assertOrdersAreOpen()
     {
         foreach ($this->events as $event) {
-            if (get_class($event) === 'CoffeeRun\\OrdersWereClosed') {
+            if (get_class($event) === 'CoffeeRun\\Runs\\OrdersWereClosed') {
                 throw new OrdersAlreadyClosed();
             }
         }

@@ -1,10 +1,11 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Bank;
 
+use CoffeeRun\UserId;
 use DateTime;
 
-final class PaymentExpected
+final class PaymentReceived
 {
     private $from;
     private $to;
@@ -14,7 +15,7 @@ final class PaymentExpected
     public function __construct(
         UserId $from,
         UserId $to,
-        Price $amount,
+        Money $amount,
         DateTime $createdAt
     ) {
         $this->from = $from;

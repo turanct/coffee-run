@@ -1,6 +1,8 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Runs;
+
+use CoffeeRun\UserId;
 
 final class Order
 {

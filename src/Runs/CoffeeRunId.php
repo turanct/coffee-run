@@ -1,8 +1,8 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Runs;
 
-final class ShopId
+final class CoffeeRunId
 {
     private $id;
 
@@ -13,7 +13,7 @@ final class ShopId
 
     public static function generate()
     {
-        $id = uniqid('shopid-', true);
+        $id = uniqid('coffeerunid-', true);
 
         return new static($id);
     }

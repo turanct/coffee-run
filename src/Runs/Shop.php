@@ -1,18 +1,16 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Runs;
 
-final class Product
+final class Shop
 {
     private $id;
     private $name;
-    private $price;
 
-    public function __construct(ShopId $id, $name, Price $price)
+    public function __construct(ShopId $id, $name)
     {
         $this->id = $id;
         $this->name = (string) $name;
-        $this->price = $price;
     }
 
     public function getId()
@@ -23,10 +21,5 @@ final class Product
     public function getName()
     {
         return $this->name;
-    }
-
-    public function getPrice()
-    {
-        return $this->price;
     }
 }

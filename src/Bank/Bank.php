@@ -1,6 +1,9 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Bank;
+
+use CoffeeRun\UserId;
+use CoffeeRun\Clock;
 
 final class Bank
 {
@@ -12,7 +15,7 @@ final class Bank
         $this->clock = $clock;
     }
 
-    public function expectPayment(UserId $from, UserId $to, Price $amount)
+    public function expectPayment(UserId $from, UserId $to, Money $amount)
     {
         $this->log[] = new PaymentExpected(
             $from,
@@ -22,7 +25,7 @@ final class Bank
         );
     }
 
-    public function pay(UserId $from, UserId $to, Price $amount)
+    public function pay(UserId $from, UserId $to, Money $amount)
     {
         $this->log[] = new PaymentReceived(
             $from,
@@ -90,8 +93,8 @@ final class Bank
 
         $payments = array_filter(
             $payments,
-            function (Price $amount) {
-                return $amount->greaterThan(new Price(0));
+            function (Money $amount) {
+                return $amount->greaterThan(new Money(0));
             }
         );
 
@@ -164,8 +167,8 @@ final class Bank
 
         $payments = array_filter(
             $payments,
-            function (Price $amount) {
-                return $amount->greaterThan(new Price(0));
+            function (Money $amount) {
+                return $amount->greaterThan(new Money(0));
             }
         );
 

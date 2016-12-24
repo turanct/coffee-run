@@ -1,7 +1,8 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Bank;
 
+use CoffeeRun\UserId;
 use DateTime;
 
 class BankTest extends \PHPUnit_Framework_TestCase
@@ -12,7 +13,7 @@ class BankTest extends \PHPUnit_Framework_TestCase
 
         $from = UserId::generate();
         $to = UserId::generate();
-        $amount = new Price(100);
+        $amount = new Money(100);
 
         $bank->expectPayment($from, $to, $amount);
 
@@ -53,7 +54,7 @@ class BankTest extends \PHPUnit_Framework_TestCase
 
         $from = UserId::generate();
         $to = UserId::generate();
-        $amount = new Price(100);
+        $amount = new Money(100);
 
         $bank->expectPayment($from, $to, $amount);
         $bank->pay($from, $to, $amount);

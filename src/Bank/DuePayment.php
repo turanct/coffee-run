@@ -1,6 +1,8 @@
 <?php
 
-namespace CoffeeRun;
+namespace CoffeeRun\Bank;
+
+use CoffeeRun\UserId;
 
 final class DuePayment
 {
@@ -8,7 +10,7 @@ final class DuePayment
     private $to;
     private $amount;
 
-    public function __construct(UserId $from, UserId $to, Price $amount)
+    public function __construct(UserId $from, UserId $to, Money $amount)
     {
         $this->from = $from;
         $this->to = $to;
