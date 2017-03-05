@@ -7,92 +7,93 @@ use CoffeeRun\Clock;
 
 final class Bank
 {
-    private $log = array();
     private $clock;
+    private $accounts;
 
-    public function __construct(Clock $clock)
+    public function __construct(Clock $clock, Accounts $accounts)
     {
         $this->clock = $clock;
+        $this->accounts = $accounts;
     }
 
-    public function expectPayment(UserId $from, UserId $to, Money $amount)
+    public function lendMoney(UserId $from, UserId $to, Money $amount, $reason)
     {
-        $this->log[] = new PaymentExpected(
-            $from,
-            $to,
-            $amount,
-            $this->clock->getTime()
-        );
+        $time = $this->clock->getTime();
+        $event = new MoneyWasLended($from, $to, $amount, $reason, $time);
+
+        $this->accounts->log($from, $event);
+        $this->accounts->log($to, $event);
     }
 
-    public function pay(UserId $from, UserId $to, Money $amount)
+    public function pay(UserId $from, UserId $to, Money $amount, $reason)
     {
-        $this->log[] = new PaymentReceived(
-            $from,
-            $to,
-            $amount,
-            $this->clock->getTime()
-        );
+        $time = $this->clock->getTime();
+        $event = new MoneyWasPaid($from, $to, $amount, $reason, $time);
+
+        $this->accounts->log($from, $event);
+        $this->accounts->log($to, $event);
     }
 
-    public function paymentsToBeMade(UserId $by)
+    public function paymentsToBeMadeBy(UserId $by)
     {
-        $expectedPayments = array_filter(
-            $this->log,
-            function ($logItem) use ($by) {
-                return
-                    $logItem instanceof PaymentExpected
-                    && $logItem->getFrom() == $by
-                ;
-            }
-        );
+        $balances = $this->accounts->reduce(
+            $by,
+            function($balances, $event) use ($by) {
+                $by = (string) $by;
+                $from = (string) $event->getfrom();
+                $to = (string) $event->getTo();
+                $amount = $event->getAmount();
 
-        $payments = array_reduce(
-            $expectedPayments,
-            function ($payments, $logItem) {
-                $to = (string) $logItem->getTo();
+                if (
+                    $event instanceof MoneyWasLended
+                    && $from == $by
+                ) {
+                    if (!isset($balances[$to])) {
+                        $balances[$to] = new Money(0);
+                    }
 
-                if (!isset($payments[$to])) {
-                    $payments[$to] = $logItem->getAmount();
-                } else {
-                    $payments[$to] = $logItem->getAmount()->add(
-                        $payments[$to]
-                    );
+                    $balances[$to] = $balances[$to]->subtract($amount);
                 }
 
-                return $payments;
-            },
-            array()
-        );
+                if (
+                    $event instanceof MoneyWasLended
+                    && $to == $by
+                ) {
+                    if (!isset($balances[$from])) {
+                        $balances[$from] = new Money(0);
+                    }
 
-        $receivedPayments = array_filter(
-            $this->log,
-            function ($logItem) use ($by) {
-                return
-                    $logItem instanceof PaymentReceived
-                    && $logItem->getFrom() == $by
-                ;
-            }
-        );
-
-        $payments = array_reduce(
-            $receivedPayments,
-            function ($payments, $logItem) {
-                $to = (string) $logItem->getTo();
-
-                if (isset($payments[$to])) {
-                    $payments[$to] = $payments[$to]->subtract(
-                        $logItem->getAmount()
-                    );
+                    $balances[$from] = $balances[$from]->add($amount);
                 }
 
-                return $payments;
-            },
-            $payments
+                if (
+                    $event instanceof MoneyWasPaid
+                    && $from == $by
+                ) {
+                    if (!isset($balances[$to])) {
+                        $balances[$to] = new Money(0);
+                    }
+
+                    $balances[$to] = $balances[$to]->subtract($amount);
+                }
+
+                if (
+                    $event instanceof MoneyWasPaid
+                    && $to == $by
+                ) {
+                    if (!isset($balances[$from])) {
+                        $balances[$from] = new Money(0);
+                    }
+
+                    $balances[$from] = $balances[$from]->add($amount);
+                }
+
+                return $balances;
+            }
         );
 
         $payments = array_filter(
-            $payments,
+            $balances,
             function (Money $amount) {
                 return $amount->greaterThan(new Money(0));
             }
@@ -109,72 +110,74 @@ final class Bank
         return $payments;
     }
 
-    public function paymentsToBeReceived(UserId $by)
+    public function paymentsToBeReceivedBy(UserId $by)
     {
-        $expectedPayments = array_filter(
-            $this->log,
-            function ($logItem) use ($by) {
-                return
-                    $logItem instanceof PaymentExpected
-                    && $logItem->getTo() == $by
-                ;
-            }
-        );
+        $balances = $this->accounts->reduce(
+            $by,
+            function($balances, $event) use ($by) {
+                $by = (string) $by;
+                $from = (string) $event->getfrom();
+                $to = (string) $event->getTo();
+                $amount = $event->getAmount();
 
-        $payments = array_reduce(
-            $expectedPayments,
-            function ($payments, $logItem) {
-                $from = (string) $logItem->getFrom();
+                if (
+                    $event instanceof MoneyWasLended
+                    && $from == $by
+                ) {
+                    if (!isset($balances[$to])) {
+                        $balances[$to] = new Money(0);
+                    }
 
-                if (!isset($payments[$from])) {
-                    $payments[$from] = $logItem->getAmount();
-                } else {
-                    $payments[$from] = $logItem->getAmount()->add(
-                        $payments[$from]
-                    );
+                    $balances[$to] = $balances[$to]->add($amount);
                 }
 
-                return $payments;
-            },
-            array()
-        );
+                if (
+                    $event instanceof MoneyWasLended
+                    && $to == $by
+                ) {
+                    if (!isset($balances[$from])) {
+                        $balances[$from] = new Money(0);
+                    }
 
-        $receivedPayments = array_filter(
-            $this->log,
-            function ($logItem) use ($by) {
-                return
-                    $logItem instanceof PaymentReceived
-                    && $logItem->getTo() == $by
-                ;
-            }
-        );
-
-        $payments = array_reduce(
-            $receivedPayments,
-            function ($payments, $logItem) {
-                $from = (string) $logItem->getFrom();
-
-                if (isset($payments[$from])) {
-                    $payments[$from] = $payments[$from]->subtract(
-                        $logItem->getAmount()
-                    );
+                    $balances[$from] = $balances[$from]->subtract($amount);
                 }
 
-                return $payments;
-            },
-            $payments
+                if (
+                    $event instanceof MoneyWasPaid
+                    && $from == $by
+                ) {
+                    if (!isset($balances[$to])) {
+                        $balances[$to] = new Money(0);
+                    }
+
+                    $balances[$to] = $balances[$to]->add($amount);
+                }
+
+                if (
+                    $event instanceof MoneyWasPaid
+                    && $to == $by
+                ) {
+                    if (!isset($balances[$from])) {
+                        $balances[$from] = new Money(0);
+                    }
+
+                    $balances[$from] = $balances[$from]->subtract($amount);
+                }
+
+                return $balances;
+            }
         );
 
         $payments = array_filter(
-            $payments,
+            $balances,
             function (Money $amount) {
                 return $amount->greaterThan(new Money(0));
             }
         );
 
         $payments = array_map(
-            function ($amount, $from) use ($by) {
-                return new DuePayment(new UserId($from), $by, $amount);
+            function ($amount, $to) use ($by) {
+                return new DuePayment(new UserId($to), $by, $amount);
             },
             $payments,
             array_keys($payments)

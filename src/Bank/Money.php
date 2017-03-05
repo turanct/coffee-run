@@ -21,15 +21,15 @@ final class Money
      */
     public function __construct($amount)
     {
-        $this->assertPositiveInteger($amount);
+        $this->assertInteger($amount);
 
         $this->amount = $amount;
     }
 
-    private function assertPositiveInteger($amount)
+    private function assertInteger($amount)
     {
-        if (!is_int($amount) || $amount < 0) {
-            $message = "Money should be a positive integer, '{$amount}' given";
+        if (!is_int($amount)) {
+            $message = "Money should be an integer, '{$amount}' given";
 
             throw new InvalidArgumentException($message);
         }
@@ -42,10 +42,6 @@ final class Money
 
     public function subtract(Money $otherMoney)
     {
-        if ($otherMoney->greaterThan($this)) {
-            return new static(0);
-        }
-
         return new static($this->amount - $otherMoney->amount);
     }
 

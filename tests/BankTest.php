@@ -7,90 +7,122 @@ use DateTime;
 
 class BankTest extends \PHPUnit_Framework_TestCase
 {
-    public function test_i_can_ask_money_from_someone()
+    public function test_lending_someone_money()
     {
-        $bank = new Bank($this->getClock(new DateTime('now')));
+        $accounts = new AccountsInMemory;
+        $bank = new Bank(
+            $this->getClock(new DateTime('now')),
+            $accounts
+        );
 
-        $from = UserId::generate();
-        $to = UserId::generate();
+        $userA = UserId::generate();
+        $userB = UserId::generate();
         $amount = new Money(100);
+        $reason = 'foo';
 
-        $bank->expectPayment($from, $to, $amount);
+        $bank->lendMoney($userA, $userB, $amount, $reason);
 
         $this->assertEquals(
-            array(
-                new DuePayment($from, $to, $amount),
-            ),
-            $bank->paymentsToBeMade($from)
+            array(),
+            $bank->paymentsToBeMadeBy($userA)
         );
 
         $this->assertEquals(
             array(
-                new DuePayment($from, $to, $amount),
+                new DuePayment($userB, $userA, $amount),
             ),
-            $bank->paymentsToBeReceived($to)
-        );
-
-        $bank->expectPayment($from, $to, $amount);
-
-        $this->assertEquals(
-            array(
-                new DuePayment($from, $to, $amount->add($amount)),
-            ),
-            $bank->paymentsToBeMade($from)
+            $bank->paymentsToBeMadeBy($userB)
         );
 
         $this->assertEquals(
             array(
-                new DuePayment($from, $to, $amount->add($amount)),
+                new DuePayment($userB, $userA, $amount),
             ),
-            $bank->paymentsToBeReceived($to)
+            $bank->paymentsToBeReceivedBy($userA)
+        );
+
+        $this->assertEquals(
+            array(),
+            $bank->paymentsToBeReceivedBy($userB)
         );
     }
 
-    public function test_paying_someone_money_pays_back_debt()
+    public function test_paying_someone_back()
     {
-        $bank = new Bank($this->getClock(new DateTime('now')));
+        $accounts = new AccountsInMemory;
+        $bank = new Bank(
+            $this->getClock(new DateTime('now')),
+            $accounts
+        );
 
-        $from = UserId::generate();
-        $to = UserId::generate();
+        $userA = UserId::generate();
+        $userB = UserId::generate();
         $amount = new Money(100);
+        $reason = 'foo';
 
-        $bank->expectPayment($from, $to, $amount);
-        $bank->pay($from, $to, $amount);
+        $bank->lendMoney($userA, $userB, $amount, $reason);
+        $bank->pay($userB, $userA, $amount, $reason);
 
         $this->assertEquals(
             array(),
-            $bank->paymentsToBeMade($from)
+            $bank->paymentsToBeMadeBy($userA)
         );
 
         $this->assertEquals(
             array(),
-            $bank->paymentsToBeReceived($to)
-        );
-
-        $bank->pay($from, $to, $amount);
-
-        $this->assertEquals(
-            array(),
-            $bank->paymentsToBeMade($from)
+            $bank->paymentsToBeMadeBy($userB)
         );
 
         $this->assertEquals(
             array(),
-            $bank->paymentsToBeReceived($to)
-        );
-
-        $bank->expectPayment($from, $to, $amount);
-
-        $this->assertEquals(
-            array(),
-            $bank->paymentsToBeMade($from)
+            $bank->paymentsToBeReceivedBy($userA)
         );
 
         $this->assertEquals(
             array(),
-            $bank->paymentsToBeReceived($to)
+            $bank->paymentsToBeReceivedBy($userB)
+        );
+    }
+
+    public function test_paying_someone_back_too_much()
+    {
+        $accounts = new AccountsInMemory;
+        $bank = new Bank(
+            $this->getClock(new DateTime('now')),
+            $accounts
+        );
+
+        $userA = UserId::generate();
+        $userB = UserId::generate();
+        $amount = new Money(100);
+        $tooMuch = new Money(150);
+        $reason = 'foo';
+
+        $bank->lendMoney($userA, $userB, $amount, $reason);
+        $bank->pay($userB, $userA, $tooMuch, $reason);
+
+        $this->assertEquals(
+            array(
+                new DuePayment($userA, $userB, $tooMuch->subtract($amount)),
+            ),
+            $bank->paymentsToBeMadeBy($userA)
+        );
+
+        $this->assertEquals(
+            array(),
+            $bank->paymentsToBeMadeBy($userB)
+        );
+
+        $this->assertEquals(
+            array(),
+            $bank->paymentsToBeReceivedBy($userA)
+        );
+
+        $this->assertEquals(
+            array(
+                new DuePayment($userA, $userB, $tooMuch->subtract($amount)),
+            ),
+            $bank->paymentsToBeReceivedBy($userB)
         );
     }
 
