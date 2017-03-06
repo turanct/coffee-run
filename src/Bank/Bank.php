@@ -38,14 +38,13 @@ final class Bank
     {
         $balances = $this->accounts->reduce(
             $by,
-            function($balances, $event) use ($by) {
+            function ($balances, $event) use ($by) {
                 $by = (string) $by;
                 $from = (string) $event->getfrom();
                 $to = (string) $event->getTo();
                 $amount = $event->getAmount();
 
-                if (
-                    $event instanceof MoneyWasLended
+                if ($event instanceof MoneyWasLended
                     && $from == $by
                 ) {
                     if (!isset($balances[$to])) {
@@ -55,8 +54,7 @@ final class Bank
                     $balances[$to] = $balances[$to]->subtract($amount);
                 }
 
-                if (
-                    $event instanceof MoneyWasLended
+                if ($event instanceof MoneyWasLended
                     && $to == $by
                 ) {
                     if (!isset($balances[$from])) {
@@ -66,8 +64,7 @@ final class Bank
                     $balances[$from] = $balances[$from]->add($amount);
                 }
 
-                if (
-                    $event instanceof MoneyWasPaid
+                if ($event instanceof MoneyWasPaid
                     && $from == $by
                 ) {
                     if (!isset($balances[$to])) {
@@ -77,8 +74,7 @@ final class Bank
                     $balances[$to] = $balances[$to]->subtract($amount);
                 }
 
-                if (
-                    $event instanceof MoneyWasPaid
+                if ($event instanceof MoneyWasPaid
                     && $to == $by
                 ) {
                     if (!isset($balances[$from])) {
@@ -114,14 +110,13 @@ final class Bank
     {
         $balances = $this->accounts->reduce(
             $by,
-            function($balances, $event) use ($by) {
+            function ($balances, $event) use ($by) {
                 $by = (string) $by;
                 $from = (string) $event->getfrom();
                 $to = (string) $event->getTo();
                 $amount = $event->getAmount();
 
-                if (
-                    $event instanceof MoneyWasLended
+                if ($event instanceof MoneyWasLended
                     && $from == $by
                 ) {
                     if (!isset($balances[$to])) {
@@ -131,8 +126,7 @@ final class Bank
                     $balances[$to] = $balances[$to]->add($amount);
                 }
 
-                if (
-                    $event instanceof MoneyWasLended
+                if ($event instanceof MoneyWasLended
                     && $to == $by
                 ) {
                     if (!isset($balances[$from])) {
@@ -142,8 +136,7 @@ final class Bank
                     $balances[$from] = $balances[$from]->subtract($amount);
                 }
 
-                if (
-                    $event instanceof MoneyWasPaid
+                if ($event instanceof MoneyWasPaid
                     && $from == $by
                 ) {
                     if (!isset($balances[$to])) {
@@ -153,8 +146,7 @@ final class Bank
                     $balances[$to] = $balances[$to]->add($amount);
                 }
 
-                if (
-                    $event instanceof MoneyWasPaid
+                if ($event instanceof MoneyWasPaid
                     && $to == $by
                 ) {
                     if (!isset($balances[$from])) {
