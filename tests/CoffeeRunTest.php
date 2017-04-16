@@ -45,6 +45,8 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $order2 = $this->freshOrder(400, 'bar');
         $coffeeRun->placeOrder($order2);
 
+        $this->assertTrue($coffeeRun->ordersCanBeMade());
+
         $this->assertEquals(
             array(
                 new OrderWasPlaced($id, $order1, $now),
@@ -63,6 +65,8 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $coffeeRun = $this->freshCoffeeRun($clock);
 
         $coffeeRun->stopOrdering($clock);
+
+        $this->assertFalse($coffeeRun->ordersCanBeMade());
 
         $order = $this->freshOrder(200, 'foo');
         $coffeeRun->placeOrder($order);

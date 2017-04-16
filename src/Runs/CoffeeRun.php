@@ -67,12 +67,21 @@ final class CoffeeRun
         $this->recordedEvents[] = $event;
     }
 
-    private function assertOrdersAreOpen()
+    public function ordersCanBeMade()
     {
         foreach ($this->events as $event) {
             if (get_class($event) === 'CoffeeRun\\Runs\\OrdersWereClosed') {
-                throw new OrdersAlreadyClosed();
+                return false;
             }
+        }
+
+        return true;
+    }
+
+    private function assertOrdersAreOpen()
+    {
+        if ($this->ordersCanBeMade() === false) {
+            throw new OrdersAlreadyClosed();
         }
     }
 
