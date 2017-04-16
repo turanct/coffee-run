@@ -11,20 +11,18 @@ final class CoffeeRun
     private $id;
     private $events;
     private $recordedEvents = array();
-    private $clock;
 
-    public function __construct(CoffeeRunId $id, array $events, Clock $clock)
+    public function __construct(CoffeeRunId $id, array $events)
     {
         $this->id = $id;
         $this->events = $events;
-        $this->clock = $clock;
     }
 
     public static function announce(
         UserId $userId,
         ShopId $shopId,
         DateTime $time,
-        Clock $clock
+        DateTime $currentTime
     ) {
         $id = CoffeeRunId::generate();
 
@@ -34,34 +32,34 @@ final class CoffeeRun
             $userId,
             $shopId,
             $time,
-            $clock->getTime()
+            $currentTime
         );
 
-        $coffeeRun = new static($id, $events, $clock);
+        $coffeeRun = new static($id, $events);
         $coffeeRun->recordedEvents = $events;
 
         return $coffeeRun;
     }
 
-    public function placeOrder(Order $order)
+    public function placeOrder(Order $order, DateTime $currentTime)
     {
         $this->assertOrdersAreOpen();
 
         $event = new OrderWasPlaced(
             $this->id,
             $order,
-            $this->clock->getTime()
+            $currentTime
         );
 
         $this->events[] = $event;
         $this->recordedEvents[] = $event;
     }
 
-    public function stopOrdering()
+    public function stopOrdering(DateTime $currentTime)
     {
         $this->assertOrdersAreOpen();
 
-        $event = new OrdersWereClosed($this->id, $this->clock->getTime());
+        $event = new OrdersWereClosed($this->id, $currentTime);
 
         $this->events[] = $event;
         $this->recordedEvents[] = $event;

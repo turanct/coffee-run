@@ -3,7 +3,6 @@
 namespace CoffeeRun\Runs;
 
 use CoffeeRun\UserId;
-use CoffeeRun\Clock;
 use DateTime;
 
 class CoffeeRunTest extends \PHPUnit_Framework_TestCase
@@ -14,9 +13,8 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $shopId = ShopId::generate();
         $time = new DateTime('tomorrow');
         $now = new DateTime('now');
-        $clock = $this->getClock($now);
 
-        $coffeeRun = CoffeeRun::announce($userId, $shopId, $time, $clock);
+        $coffeeRun = CoffeeRun::announce($userId, $shopId, $time, $now);
 
         $this->assertEquals(
             array(
@@ -35,15 +33,14 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
     public function test_it_accepts_orders()
     {
         $now = new DateTime('now');
-        $clock = $this->getClock($now);
-        $coffeeRun = $this->freshCoffeeRun($clock);
+        $coffeeRun = $this->freshCoffeeRun();
         $id = $coffeeRun->getId();
 
         $order1 = $this->freshOrder(200, 'foo');
-        $coffeeRun->placeOrder($order1);
+        $coffeeRun->placeOrder($order1, $now);
 
         $order2 = $this->freshOrder(400, 'bar');
-        $coffeeRun->placeOrder($order2);
+        $coffeeRun->placeOrder($order2, $now);
 
         $this->assertTrue($coffeeRun->ordersCanBeMade());
 
@@ -61,18 +58,18 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
      */
     public function test_it_rejects_orders_when_orders_were_closed()
     {
-        $clock = $this->getClock(new DateTime('now'));
-        $coffeeRun = $this->freshCoffeeRun($clock);
+        $now = new DateTime('now');
 
-        $coffeeRun->stopOrdering($clock);
+        $coffeeRun = $this->freshCoffeeRun();
+        $coffeeRun->stopOrdering($now);
 
         $this->assertFalse($coffeeRun->ordersCanBeMade());
 
         $order = $this->freshOrder(200, 'foo');
-        $coffeeRun->placeOrder($order);
+        $coffeeRun->placeOrder($order, $now);
     }
 
-    private function freshCoffeeRun(Clock $clock)
+    private function freshCoffeeRun()
     {
         $id = CoffeeRunId::generate();
         $userId = UserId::generate();
@@ -84,7 +81,7 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
             new CoffeeRunWasAnnounced($id, $userId, $shopId, $time, $now),
         );
 
-        $coffeeRun = new CoffeeRun($id, $events, $clock);
+        $coffeeRun = new CoffeeRun($id, $events);
 
         return $coffeeRun;
     }
@@ -99,16 +96,5 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         );
 
         return $order;
-    }
-
-    private function getClock(DateTime $now)
-    {
-        $clock = $this->getMock('CoffeeRun\\Clock');
-        $clock
-            ->method('getTime')
-            ->willReturn($now)
-        ;
-
-        return $clock;
     }
 }
