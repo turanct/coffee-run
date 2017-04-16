@@ -9,17 +9,18 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
 {
     public function test_it_can_be_announced()
     {
+        $id = CoffeeRunId::generate();
         $userId = UserId::generate();
         $shopId = ShopId::generate();
         $time = new DateTime('tomorrow');
         $now = new DateTime('now');
 
-        $coffeeRun = CoffeeRun::announce($userId, $shopId, $time, $now);
+        $coffeeRun = CoffeeRun::announce($id, $userId, $shopId, $time, $now);
 
         $this->assertEquals(
             array(
                 new CoffeeRunWasAnnounced(
-                    $coffeeRun->getId(),
+                    $id,
                     $userId,
                     $shopId,
                     $time,

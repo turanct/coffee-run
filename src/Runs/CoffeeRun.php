@@ -18,13 +18,12 @@ final class CoffeeRun
     }
 
     public static function announce(
+        CoffeeRunId $id,
         UserId $userId,
         ShopId $shopId,
         DateTime $time,
         DateTime $currentTime
     ) {
-        $id = CoffeeRunId::generate();
-
         $events = array();
         $events[] = new CoffeeRunWasAnnounced(
             $id,
