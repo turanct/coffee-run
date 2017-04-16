@@ -3,7 +3,6 @@
 namespace CoffeeRun\Runs;
 
 use CoffeeRun\UserId;
-use CoffeeRun\Clock;
 use DateTime;
 
 final class CoffeeRun
