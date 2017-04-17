@@ -63,6 +63,21 @@ final class CoffeeRun
         $this->recordedEvents[] = $event;
     }
 
+    public function getShoppingList()
+    {
+        $shoppingList = array();
+
+        foreach ($this->events as $event) {
+            if (!$event instanceof OrderWasPlaced) {
+                continue;
+            }
+
+            $shoppingList[] = $event->getOrder();
+        }
+
+        return $shoppingList;
+    }
+
     public function ordersCanBeMade()
     {
         foreach ($this->events as $event) {

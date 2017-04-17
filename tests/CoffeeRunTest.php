@@ -70,6 +70,26 @@ class CoffeeRunTest extends \PHPUnit_Framework_TestCase
         $coffeeRun->placeOrder($order, $now);
     }
 
+    public function test_it_presents_a_shopping_list_with_all_orders()
+    {
+        $now = new DateTime('now');
+        $coffeeRun = $this->freshCoffeeRun();
+
+        $this->assertEquals(array(), $coffeeRun->getShoppingList());
+
+        $order1 = $this->freshOrder(200, 'foo');
+        $coffeeRun->placeOrder($order1, $now);
+
+        $order2 = $this->freshOrder(400, 'bar');
+        $coffeeRun->placeOrder($order2, $now);
+
+        $coffeeRun->stopOrdering($now);
+
+        $expected = array($order1, $order2);
+
+        $this->assertEquals($expected, $coffeeRun->getShoppingList());
+    }
+
     private function freshCoffeeRun()
     {
         $id = CoffeeRunId::generate();
