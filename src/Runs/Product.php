@@ -8,7 +8,7 @@ final class Product
     private $name;
     private $price;
 
-    public function __construct(ShopId $id, $name, Price $price)
+    public function __construct(ProductId $id, $name, Price $price)
     {
         $this->id = $id;
         $this->name = (string) $name;
