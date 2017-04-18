@@ -9,10 +9,10 @@ class BankTest extends \PHPUnit_Framework_TestCase
 {
     public function test_lending_someone_money()
     {
-        $accounts = new AccountsInMemory;
+        $log = new TransactionLogInMemory;
         $bank = new Bank(
             $this->getClock(new DateTime('now')),
-            $accounts
+            $log
         );
 
         $userA = UserId::generate();
@@ -49,10 +49,10 @@ class BankTest extends \PHPUnit_Framework_TestCase
 
     public function test_paying_someone_back()
     {
-        $accounts = new AccountsInMemory;
+        $log = new TransactionLogInMemory;
         $bank = new Bank(
             $this->getClock(new DateTime('now')),
-            $accounts
+            $log
         );
 
         $userA = UserId::generate();
@@ -86,10 +86,10 @@ class BankTest extends \PHPUnit_Framework_TestCase
 
     public function test_paying_someone_back_too_much()
     {
-        $accounts = new AccountsInMemory;
+        $log = new TransactionLogInMemory;
         $bank = new Bank(
             $this->getClock(new DateTime('now')),
-            $accounts
+            $log
         );
 
         $userA = UserId::generate();

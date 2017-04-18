@@ -8,12 +8,12 @@ use CoffeeRun\Clock;
 final class Bank
 {
     private $clock;
-    private $accounts;
+    private $log;
 
-    public function __construct(Clock $clock, Accounts $accounts)
+    public function __construct(Clock $clock, TransactionLog $log)
     {
         $this->clock = $clock;
-        $this->accounts = $accounts;
+        $this->log = $log;
     }
 
     public function lendMoney(UserId $from, UserId $to, Money $amount, $reason)
@@ -21,8 +21,7 @@ final class Bank
         $time = $this->clock->getTime();
         $event = new MoneyWasLended($from, $to, $amount, $reason, $time);
 
-        $this->accounts->log($from, $event);
-        $this->accounts->log($to, $event);
+        $this->log->append($event);
     }
 
     public function pay(UserId $from, UserId $to, Money $amount, $reason)
@@ -30,14 +29,12 @@ final class Bank
         $time = $this->clock->getTime();
         $event = new MoneyWasPaid($from, $to, $amount, $reason, $time);
 
-        $this->accounts->log($from, $event);
-        $this->accounts->log($to, $event);
+        $this->log->append($event);
     }
 
     public function paymentsToBeMadeBy(UserId $by)
     {
-        $balances = $this->accounts->reduce(
-            $by,
+        $balances = $this->log->reduce(
             function ($balances, $event) use ($by) {
                 $by = (string) $by;
                 $from = (string) $event->getfrom();
@@ -108,8 +105,7 @@ final class Bank
 
     public function paymentsToBeReceivedBy(UserId $by)
     {
-        $balances = $this->accounts->reduce(
-            $by,
+        $balances = $this->log->reduce(
             function ($balances, $event) use ($by) {
                 $by = (string) $by;
                 $from = (string) $event->getfrom();
