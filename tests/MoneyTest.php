@@ -10,7 +10,7 @@ class MoneyTest extends \PHPUnit_Framework_TestCase
         $moneyB = new Money(300);
 
         $this->assertEquals(
-            new Money(500),
+            new Money(400),
             $moneyA->add($moneyB)
         );
     }
