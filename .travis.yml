@@ -1,3 +1,5 @@
+sudo: false
+dist: precise
 language: php
 
 php:
@@ -13,4 +15,5 @@ before_script:
 
 script:
     - bin/phpcs --standard=psr2 src/
+    - bin/phpmd src/ text cleancode,codesize,controversial,design,unusedcode
     - bin/phpunit
