@@ -9,6 +9,7 @@ final class Order
     private $userId;
     private $productId;
     private $price;
+    private $description;
 
     public function __construct(
         UserId $userId,

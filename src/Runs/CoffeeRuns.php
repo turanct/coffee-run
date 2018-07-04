@@ -14,7 +14,7 @@ interface CoffeeRuns
     /**
      * Get a coffeerun by its id
      *
-     * @param CoffeeRunId The coffeerun's id
+     * @param CoffeeRunId $id The coffeerun's id
      *
      * @return CoffeeRun The coffeerun
      */
@@ -23,7 +23,7 @@ interface CoffeeRuns
     /**
      * Persist a coffeerun
      *
-     * @param CoffeeRun The coffeerun instance
+     * @param CoffeeRun $coffeeRun The coffeerun instance
      */
     public function persist(CoffeeRun $coffeeRun);
 }

@@ -9,7 +9,7 @@ interface Products
      *
      * @param ProductId $id The product's id
      *
-     * @throws InvalidArgumentId when the product is not found
+     * @throws \InvalidArgumentException when the product is not found
      *
      * @return Product A product
      */

@@ -14,7 +14,7 @@ interface Shops
     /**
      * Get a shop by its id
      *
-     * @param ShopId The shop's id
+     * @param ShopId $id The shop's id
      *
      * @return Shop The shop
      */

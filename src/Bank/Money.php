@@ -17,7 +17,7 @@ final class Money
      * not make it more complicated that we need. Everything is in the
      * same currency.
      *
-     * @param string $amount
+     * @param int $amount
      */
     public function __construct($amount)
     {
